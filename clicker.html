@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Click Tracker</title>
+</head>
+<body>
+<h1>Ayan Mahmood, Software Engineering Super League Level 1</h1>
+<p>Click anywhere on the page to track your clicks.</p>
+<p>Number of clicks: <span id="clickCount">0</span></p>
+<ul id="clickList">
+</ul>
+<button id="resetButton">Reset</button>
+<script>
+    // Define variables and functions
+    let clickCount = 0;
+    let clickData = [];
+
+    /**
+     * Tracks and stores the users x and y co-ordinates of a click and also adds it to the local storage
+     */
+    function addClick(event) {
+        let clickX = event.clientX;
+        let clickY = event.clientY;
+        clickCount++;
+        clickData.push({x: clickX, y: clickY});
+        localStorage.setItem("clickData", JSON.stringify(clickData));
+        updateDisplay();
+    }
+
+    /**
+     * Prints out the data
+     */
+    function updateDisplay() {
+        document.getElementById("clickCount").textContent = clickCount;
+        let clickList = document.getElementById("clickList");
+        clickList.innerHTML = "";
+        for (var i = 0; i < clickData.length; i++) {
+            let item = document.createElement("li");
+            item.textContent = "Click at (" + clickData[i].x + ", " + clickData[i].y + ")";
+            clickList.appendChild(item);
+        }
+    }
+
+    /**
+     * resets the data and clicker count and clears the data
+     */
+    function reset() {
+        clickCount = 0;
+        clickData = [];
+        localStorage.setItem("clickData", JSON.stringify(clickData));
+        updateDisplay();
+    }
+
+    /**
+     * Loads data from local storage so that when page is refreshed no data is lost
+     */
+    function init() {
+        let storedClickData = localStorage.getItem("clickData");
+        if (storedClickData) {
+            clickData = JSON.parse(storedClickData);
+            clickCount = clickData.length;
+        }
+        // Add click event listener
+        document.addEventListener("click", addClick);
+        // Add click event listener to reset button
+        document.getElementById("resetButton").addEventListener("click", reset);
+        // Update display
+        updateDisplay();
+    }
+
+    // Call init function when page is loaded
+    init();
+</script>
+</body>
+</html>
